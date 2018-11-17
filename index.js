@@ -96,8 +96,9 @@ usersIO.on('connection', function(socket){
 
     socket.on('user-responce',function(data){
         console.log(game.users[socket.id].name+ " resonded question with "+data.responce);
-        game.users[socket.id].lastResponce = data.responce;
-        game.numberOfRecievedAnswers++;
+        // game.users[socket.id].lastResponce = data.responce;
+        // game.numberOfRecievedAnswers++;
+        game.addAnswer(data.responce,socket.id);
         if(game.numberOfRecievedAnswers >= game.numUsers){
             //TODO: This is where everone has answered and we can start the user Guessing Loop.
             console.log("Everyone Has answered")

@@ -3,3 +3,5 @@ function Answer(answer,userName){
     this.answer = answer;
     this.userName = userName;
 }
+
+module.exports = Answer;

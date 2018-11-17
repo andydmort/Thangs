@@ -1,4 +1,5 @@
 var User = require("./userMod.js");
+var Answer = require("./answerMod.js");
 const csv = require('csv-parser');
 // csv({ separator: '\t' });
 const fs = require('fs');
@@ -45,11 +46,12 @@ function Game(gameId){
     }
     this.numberOfRecievedAnswers=0;
     this.answers = [];
-    this.addAnswer = function(answer){
-        this.answers.push(answer);
-        numberOfRecievedAnswers++;
+    this.addAnswer = function(answer,socketId){
+        this.users[socketId].lastResponce = answer;
+        this.answers.push(new Answer(answer,this.users[socketId].name));
+        this.numberOfRecievedAnswers++;
     }
-    this.dropAnswer = function(){
+    this.dropAnswers = function(){
         this.answers=[];
         this.numberOfRecievedAnswers = 0;
     }
