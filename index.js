@@ -69,7 +69,8 @@ usersIO.on('connection', function(socket){
         else{
             console.log(data.name+" is joining quiz "+data.gameId);
             //adding user to game
-            game.users[socket.id]=new User(data.name,socket.id);
+            // game.users[socket.id]=new User(data.name,socket.id);
+            game.addUser(data.name,socket.id);
             //sending name to proctor
             proctorIO.emit('to-proctor-name-joined',data);
             //Giving responce to User
@@ -82,22 +83,15 @@ usersIO.on('connection', function(socket){
     });
 
     socket.on('user-responce',function(data){
-        console.log("User resonded question with "+data.responce);
+        console.log(game.users[socket.id].name+ " resonded question with "+data.responce);
+        game.users[socket.id].lastResponce = data.responce;
+        game.numberOfRecievedAnswers++;
         console.log(game);
     });
 
     socket.on('disconnect',function(){
-        console.log(game);
-        delete game.users[socket.id];
-        console.log(game);
-        // for(i in game.users){
-            //erase the user that is disconnecting. 
-            // if(game.users[i].socketid == socket.id){
-            //     console.log(game.users[i].name+" is leaving the game.");
-            //     game.users.splice(i,1);
-            //     console.log(game);
-            // }
-        // }
+        // delete game.users[socket.id];
+        game.removeUser(socket.id);
     });
     
 });
