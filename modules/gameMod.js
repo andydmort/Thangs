@@ -15,7 +15,7 @@ function readQuestions(fileName){
 // console.log(readQuestions('questions.txt'));
 
 function Game(gameId){
-    this.users = []; //A list of the user Module;
+    this.users = {}; //A diction of the user Module, the key will be the socketId;
     this.turnOfUserIndex = 0;
     this.gameId = gameId;
     this.questions = readQuestions('questions.txt');
