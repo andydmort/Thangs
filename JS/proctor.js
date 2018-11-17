@@ -7,4 +7,8 @@ socket.on('to-proctor-name-joined',function(data){
     newUserEl.innerHTML = data.name;
     usersEl.appendChild(newUserEl);
     console.log(data);
-})
+});
+
+function startGame(){
+    console.log("Button clicked for starting game.");
+}
