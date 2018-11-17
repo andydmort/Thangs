@@ -6,6 +6,9 @@ function test(){
 }
 
 function joinGame(){
-    console.log("sending: {name: 'Sarah', gameId:'1'}");
-    socket.emit("user-join-game",{name: "Sarah", gameId:"1"});
+    var gameIdFieldEl = document.getElementById('text-field-game-id');
+    var nameFieldEl = document.getElementById('text-field-name');
+    console.log("sending:"+JSON.stringify({name: nameFieldEl.value, gameId:gameIdFieldEl.value}));
+    
+    socket.emit("user-join-game",{name: nameFieldEl.value, gameId:gameIdFieldEl.value});
 }

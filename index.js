@@ -1,4 +1,6 @@
-var ClientCreator = require("./clientCreator.js");
+var ClientCreator = require("./modules/clientCreator.js");
+var Game = require("./modules/gameMod.js");
+var User = require("./modules/userMod.js");
 
 var express = require("express");
 var app = express();
@@ -8,6 +10,7 @@ const port = 3450
 
 app.use(express.static('JS')); 
 
+var game;//Global game variable. 
 
 app.get('/', (req, res) =>{
     res.sendFile(__dirname+'/proctorPages/template.html');
@@ -27,12 +30,14 @@ app.get('/user', (req, res) =>{
 //     }) 
 // });
 
-proctorSocketId=0;
 var proctorIO = io.of('/proctor');
 proctorIO.on('connection', function(socket){
     proctorSocketId=socket.id;
   console.log('proctor connected');
-  ClientCreator.getPageAndReplace({gameId:'1'},'proctorPages/landing.html').then((strn)=>{
+  //Create Game
+  game = new Game(Math.floor(Math.random()*101));
+
+  ClientCreator.getPageAndReplace({gameId:game.gameId},'proctorPages/landing.html').then((strn)=>{
         proctorIO.emit('send-page', strn);
     });
 
@@ -51,13 +56,20 @@ usersIO.on('connection', function(socket){
 
     //Setting socket for User
     socket.on('user-join-game',function(data){
-        console.log(data);
-        console.log("sending: "+data+" to proctor");
-        // for( i in proctorIO.sockets.connected){
-        //     proctorIO.sockets.connected[i].emit('to-proctor-name-joined',data);
-        // }
-        console.log(proctorSocketId);
-        proctorIO.emit('to-proctor-name-joined',data);
+        if(game.gameId != data.gameId || data.name == ''){
+            console.log("Someone tried an incorrect ID");
+            ClientCreator.getPage('userPages/loginError.html').then((strn)=>{
+                socket.emit('send-page', strn);
+            });
+        }
+        else{
+            console.log(data.name+" is joining quiz "+data.gameId);
+            proctorIO.emit('to-proctor-name-joined',data);
+            ClientCreator.getPageAndReplace({name:data.name},'userPages/waitingGameStart.html').then((strn)=>{
+                socket.emit('send-page', strn);
+            });
+        }
+        // console.log("sending: "+data+" to proctor");
         // proctorIO.sockets.emit('to-proctor-name-joined',data);
     });
 });
