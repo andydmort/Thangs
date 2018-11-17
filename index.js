@@ -20,16 +20,6 @@ app.get('/user', (req, res) =>{
 });
 
 
-//TODO: Upgrade to socket rooms to tell differencs between user and client.
-// io.on('connection', function(socket){
-//     console.log('a user connected');
-    
-//     ClientCreator.getPageAndReplace({1:'<p>You passed another test<p>'},'userPages/testClient1.html').then((strn)=>{
-//         console.log("here3");
-//         io.emit('send-page', strn);
-//     }) 
-// });
-
 var proctorIO = io.of('/proctor');
 proctorIO.on('connection', function(socket){
     proctorSocketId=socket.id;
@@ -91,6 +81,10 @@ usersIO.on('connection', function(socket){
         // proctorIO.sockets.emit('to-proctor-name-joined',data);
     });
 
+    socket.on('user-responce',function(data){
+        console.log("User resonded question with "+data.responce);
+    });
+
     socket.on('disconnect',function(){
         console.log(game);
         for(i in game.users){
@@ -113,4 +107,3 @@ function getRandInt(highVal){
 
 http.listen(port, () => console.log(`Server is listening on port ${port}!`));
 
-// console.log(ClientCreator.replaceInString({name:'Sarah',name2:'Andrew'},"The most buetiful person in the whole world is /$name$/ and she is married to /$name2$/"));
