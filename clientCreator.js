@@ -25,4 +25,13 @@ function replaceInString(patternObj,fullString){
     return fullString;
 }
 
-module.exports = {'getPage':getPage, 'replaceInString':replaceInString};
+function getPageAndReplace(patternObj,path){
+    return new Promise(function(resolve,reject){
+        getPage(path).then((page)=>{
+            resolve(replaceInString(patternObj,page));
+        });
+
+    })
+}
+
+module.exports = {'getPage':getPage, 'replaceInString':replaceInString, 'getPageAndReplace':getPageAndReplace};
