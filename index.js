@@ -26,6 +26,8 @@ proctorIO.on('connection', function(socket){
   console.log('proctor connected');
   //Create Game
   game = new Game(getRandInt(100));
+  console.log("Initializing Game:")
+  console.log(game);
 
   ClientCreator.getPageAndReplace({gameId:game.gameId},'proctorPages/landing.html').then((strn)=>{
         proctorIO.emit('send-page', strn);
@@ -33,15 +35,23 @@ proctorIO.on('connection', function(socket){
 
     //Setting sockets for Proctor. 
     socket.on('start-game',function(){
-        console.log("Proctor is starting game.");
-        game.questionIndex=getRandInt(game.questions.length-1);
-        ClientCreator.getPageAndReplace({quest:game.questions[game.questionIndex]},'proctorPages/displayQuestion.html').then((strn)=>{
-            proctorIO.emit('send-page', strn);
-        });
-        ClientCreator.getPageAndReplace({quest:game.questions[game.questionIndex]},'userPages/answerQuestionPrompt.html').then((strn)=>{
+        
+        // game.questionIndex=getRandInt(game.questions.length-1);
+        // ClientCreator.getPageAndReplace({quest:game.questions[game.questionIndex]},'proctorPages/displayQuestion.html').then((strn)=>{
+        //     proctorIO.emit('send-page', strn);
+        // });
+        ClientCreator.getPageAndReplace({quest:game.getNewQuestion()},'proctorPages/displayQuestion.html').then((strn)=>{
+                proctorIO.emit('send-page', strn);
+            });
+        // ClientCreator.getPageAndReplace({quest:game.questions[game.questionIndex]},'userPages/answerQuestionPrompt.html').then((strn)=>{
+        //     usersIO.emit('send-page', strn);
+        // });
+        ClientCreator.getPageAndReplace({quest:game.getCurrentQuestion()},'userPages/answerQuestionPrompt.html').then((strn)=>{
             usersIO.emit('send-page', strn);
         });
-
+        
+        console.log("Proctor is starting game:");
+        console.log(game);
     });
 
     socket.on('disconnect',function(){
@@ -77,6 +87,8 @@ usersIO.on('connection', function(socket){
             ClientCreator.getPageAndReplace({name:data.name},'userPages/waitingGameStart.html').then((strn)=>{
                 socket.emit('send-page', strn);
             });
+            console.log(data.name+" Joined quiz:");
+            console.log(game);
         }
         // console.log("sending: "+data+" to proctor");
         // proctorIO.sockets.emit('to-proctor-name-joined',data);
@@ -86,11 +98,15 @@ usersIO.on('connection', function(socket){
         console.log(game.users[socket.id].name+ " resonded question with "+data.responce);
         game.users[socket.id].lastResponce = data.responce;
         game.numberOfRecievedAnswers++;
+        if(game.numberOfRecievedAnswers >= game.numUsers){
+            //TODO: This is where everone has answered and we can start the user Guessing Loop.
+            console.log("Everyone Has answered")
+        }
         console.log(game);
     });
 
     socket.on('disconnect',function(){
-        // delete game.users[socket.id];
+        console.log(game.users[socket.id].name+" left the game");
         game.removeUser(socket.id);
     });
     

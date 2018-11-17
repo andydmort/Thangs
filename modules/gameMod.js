@@ -13,6 +13,10 @@ function readQuestions(fileName){
     return questions;
 }
 
+function getRandInt(highVal){
+    console.log()
+    return Math.floor(Math.random()*highVal+1);
+}
 // console.log(readQuestions('questions.txt'));
 
 function Game(gameId){
@@ -32,7 +36,23 @@ function Game(gameId){
     this.gameId = gameId;
     this.questions = readQuestions('questions.txt');
     this.questionIndex = 0;
+    this.getNewQuestion= function(){
+        this.questionIndex=getRandInt(this.questions.length-1);
+        return this.questions[this.questionIndex];
+    }
+    this.getCurrentQuestion = function(){
+        return this.questions[this.questionIndex];
+    }
     this.numberOfRecievedAnswers=0;
+    this.answers = [];
+    this.addAnswer = function(answer){
+        this.answers.push(answer);
+        numberOfRecievedAnswers++;
+    }
+    this.dropAnswer = function(){
+        this.answers=[];
+        this.numberOfRecievedAnswers = 0;
+    }
 }
 
 
