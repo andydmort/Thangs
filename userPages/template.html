@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<head>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/user.js"></script>
+</head>
+<html>
+<body id="client">
+    <h1>Nothing has been loaded yet!</h1>
+
+</body>
+</html>
+
+<script>
+    // var socket = io('/users');
+    socket.on('send-page',function(data){
+        console.log(data);
+        bodyEl = document.getElementById('client').innerHTML=data;
+    });
+
+</script>

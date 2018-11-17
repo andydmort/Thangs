@@ -25,12 +25,12 @@ function replaceInString(patternObj,fullString){
     return fullString;
 }
 
+//patter Obj ex. {name: 'Johnathan'}
 function getPageAndReplace(patternObj,path){
     return new Promise(function(resolve,reject){
         getPage(path).then((page)=>{
             resolve(replaceInString(patternObj,page));
         });
-
     })
 }
 
