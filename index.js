@@ -35,13 +35,19 @@ proctorIO.on('connection', function(socket){
     proctorSocketId=socket.id;
   console.log('proctor connected');
   //Create Game
-  game = new Game(Math.floor(Math.random()*101));
+  game = new Game(getRandInt(100));
 
   ClientCreator.getPageAndReplace({gameId:game.gameId},'proctorPages/landing.html').then((strn)=>{
         proctorIO.emit('send-page', strn);
     });
 
     //Setting sockets for Proctor. 
+    socket.on('start-game',function(){
+        console.log("Proctor is starting game.");
+        ClientCreator.getPageAndReplace({quest:game.questions[getRandInt(game.questions.length-1)]},'proctorPages/displayQuestion.html').then((strn)=>{
+            proctorIO.emit('send-page', strn);
+        });
+    });
 
     socket.on('disconnect',function(){
         console.log("Proctor has left game is over.");
@@ -94,6 +100,11 @@ usersIO.on('connection', function(socket){
     
 });
 
+//low bound is 0 and high is highVal
+function getRandInt(highVal){
+    console.log()
+    return Math.floor(Math.random()*highVal+1);
+}
 
 http.listen(port, () => console.log(`Server is listening on port ${port}!`));
 
