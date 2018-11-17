@@ -11,7 +11,7 @@
 </html>
 
 <script>
-    var socket = io('/proctor');
+    // var socket = io('/proctor');
     socket.on('send-page',function(data){
         console.log(data);
         bodyEl = document.getElementById('client').innerHTML=data;

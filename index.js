@@ -27,9 +27,10 @@ app.get('/user', (req, res) =>{
 //     }) 
 // });
 
-
+proctorSocketId=0;
 var proctorIO = io.of('/proctor');
 proctorIO.on('connection', function(socket){
+    proctorSocketId=socket.id;
   console.log('proctor connected');
   ClientCreator.getPageAndReplace({gameId:'1'},'proctorPages/landing.html').then((strn)=>{
         proctorIO.emit('send-page', strn);
@@ -51,6 +52,13 @@ usersIO.on('connection', function(socket){
     //Setting socket for User
     socket.on('user-join-game',function(data){
         console.log(data);
+        console.log("sending: "+data+" to proctor");
+        // for( i in proctorIO.sockets.connected){
+        //     proctorIO.sockets.connected[i].emit('to-proctor-name-joined',data);
+        // }
+        console.log(proctorSocketId);
+        proctorIO.emit('to-proctor-name-joined',data);
+        // proctorIO.sockets.emit('to-proctor-name-joined',data);
     });
 });
 
