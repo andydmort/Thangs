@@ -43,7 +43,10 @@ proctorIO.on('connection', function(socket){
 
     //Setting sockets for Proctor. 
 
-
+    socket.on('disconnect',function(){
+        console.log("Proctor has left game is over.");
+        game=null;
+    });
 });
 // procotrIO.emit('hi', 'everyone!');
 
@@ -64,7 +67,11 @@ usersIO.on('connection', function(socket){
         }
         else{
             console.log(data.name+" is joining quiz "+data.gameId);
+            //adding user to game
+            game.users.push(new User(data.name,socket.id));
+            //sending name to proctor
             proctorIO.emit('to-proctor-name-joined',data);
+            //Giving responce to User
             ClientCreator.getPageAndReplace({name:data.name},'userPages/waitingGameStart.html').then((strn)=>{
                 socket.emit('send-page', strn);
             });
@@ -72,6 +79,19 @@ usersIO.on('connection', function(socket){
         // console.log("sending: "+data+" to proctor");
         // proctorIO.sockets.emit('to-proctor-name-joined',data);
     });
+
+    socket.on('disconnect',function(){
+        console.log(game);
+        for(i in game.users){
+            //erase the user that is disconnecting. 
+            if(game.users[i].socketid == socket.id){
+                console.log(game.users[i].name+" is leaving the game.");
+                game.users.splice(i,1);
+                console.log(game);
+            }
+        }
+    });
+    
 });
 
 
