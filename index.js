@@ -44,9 +44,14 @@ proctorIO.on('connection', function(socket){
     //Setting sockets for Proctor. 
     socket.on('start-game',function(){
         console.log("Proctor is starting game.");
-        ClientCreator.getPageAndReplace({quest:game.questions[getRandInt(game.questions.length-1)]},'proctorPages/displayQuestion.html').then((strn)=>{
+        game.questionIndex=getRandInt(game.questions.length-1);
+        ClientCreator.getPageAndReplace({quest:game.questions[game.questionIndex]},'proctorPages/displayQuestion.html').then((strn)=>{
             proctorIO.emit('send-page', strn);
         });
+        ClientCreator.getPageAndReplace({quest:game.questions[game.questionIndex]},'userPages/answerQuestionPrompt.html').then((strn)=>{
+            usersIO.emit('send-page', strn);
+        });
+
     });
 
     socket.on('disconnect',function(){

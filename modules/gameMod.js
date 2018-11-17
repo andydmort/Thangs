@@ -19,6 +19,7 @@ function Game(gameId){
     this.turnOfUserIndex = 0;
     this.gameId = gameId;
     this.questions = readQuestions('questions.txt');
+    this.questionIndex = 0;
 }
 
 
