@@ -100,12 +100,12 @@ usersIO.on('connection', function(socket){
         // game.numberOfRecievedAnswers++;
         game.addAnswer(data.responce,socket.id);
         if(game.numberOfRecievedAnswers >= game.numUsers){
-            //TODO: This is where everone has answered and we can start the user Guessing Loop.
+            //This is where everone has answered and we can start the user Guessing Loop.
             console.log("Everyone Has answered");
 
             //Send the answers to procotor. 
             sendProctorAnswerPage();
-            
+            GuessingLoop();
         }
         console.log(game);
     });
@@ -150,6 +150,42 @@ function sendProctorAnswerPage(){
             proctorIO.emit('send-page', strn);
         });
     });
+}
+
+async function buildUserAnswerPage(){
+    return new Promise( async function(resolve,reject){
+        userAnswersHtml='';
+        for( i in game.answers){
+            if(!game.answers[i].isGuessed){
+                await ClientCreator.getPageAndReplace({answerIndex: i, name: '?',answer:game.answers[i].answer},"userPages/userBottomResponceTemplate.html").then((strn1)=>{
+                    userAnswersHtml+= strn1;
+                });
+            }
+            else{
+                await ClientCreator.getPageAndReplace({answerIndex: i, name: game.answers[i].userName, answer:game.answers[i].answer},"userPages/userBottomResponceTemplate.html").then((strn2)=>{
+                    userAnswersHtml+= strn2;
+                });
+            }
+        }
+        resolve(userAnswersHtml);
+    });
+}
+
+function sendUserAnswerPage(){
+    buildUserAnswerPage().then((strn3)=>{
+        console.log("Printing the html for User answer page");
+        console.log(strn3);
+        ClientCreator.getPageAndReplace({question:game.getCurrentQuestion(),answers:strn3},"userPages/topResponceTemplate.html").then((strn4)=>{
+            usersIO.emit('send-page', strn4);
+        });
+    });
+    
+}
+
+//This function will be a loop to go through users so they can guessed who said what. 
+function GuessingLoop(){
+    sendUserAnswerPage();
+
 }
 
 http.listen(port, () => console.log(`Server is listening on port ${port}!`));
