@@ -104,11 +104,8 @@ usersIO.on('connection', function(socket){
             console.log("Everyone Has answered");
 
             //Send the answers to procotor. 
-            buildProctorAnswerPage().then((data)=>{
-                ClientCreator.getPageAndReplace({question:game.getCurrentQuestion(),answers:data},"proctorPages/topResponceTemplate.html").then((strn)=>{
-                    proctorIO.emit('send-page', strn);
-                });
-            });
+            sendProctorAnswerPage();
+            
         }
         console.log(game);
     });
@@ -146,5 +143,14 @@ async function buildProctorAnswerPage(){
 
     });
 }
+
+function sendProctorAnswerPage(){
+    buildProctorAnswerPage().then((data)=>{
+        ClientCreator.getPageAndReplace({question:game.getCurrentQuestion(),answers:data},"proctorPages/topResponceTemplate.html").then((strn)=>{
+            proctorIO.emit('send-page', strn);
+        });
+    });
+}
+
 http.listen(port, () => console.log(`Server is listening on port ${port}!`));
 
