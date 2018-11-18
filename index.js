@@ -101,7 +101,14 @@ usersIO.on('connection', function(socket){
         game.addAnswer(data.responce,socket.id);
         if(game.numberOfRecievedAnswers >= game.numUsers){
             //TODO: This is where everone has answered and we can start the user Guessing Loop.
-            console.log("Everyone Has answered")
+            console.log("Everyone Has answered");
+
+            //Send the answers to procotor. 
+            buildProctorAnswerPage().then((data)=>{
+                ClientCreator.getPageAndReplace({question:game.getCurrentQuestion(),answers:data},"proctorPages/topResponceTemplate.html").then((strn)=>{
+                    proctorIO.emit('send-page', strn);
+                });
+            });
         }
         console.log(game);
     });
@@ -119,5 +126,25 @@ function getRandInt(highVal){
     return Math.floor(Math.random()*highVal+1);
 }
 
+
+async function buildProctorAnswerPage(){
+    return new Promise( async function(resolve,reject){
+        answersHtml='';
+        for( i in game.answers){
+            if(!game.answers[i].isGuessed){
+                await ClientCreator.getPageAndReplace({name: '?',answer:game.answers[i].answer},"proctorPages/bottomResponceTemplate.html").then((data)=>{
+                    answersHtml+= data;
+                });
+            }
+            else{
+                await ClientCreator.getPageAndReplace({name: game.answers[i].userName,answer:game.answers[i].answer},"proctorPages/bottomResponceTemplate.html").then((data)=>{
+                    answersHtml+= data;
+                });
+            }
+        }
+        resolve(answersHtml);
+
+    });
+}
 http.listen(port, () => console.log(`Server is listening on port ${port}!`));
 
