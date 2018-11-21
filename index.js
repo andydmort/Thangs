@@ -111,14 +111,14 @@ usersIO.on('connection', function(socket){
     });
 
     socket.on('user-guess',function(data){
-        console.log(game.users[socket.id].name+" made a guess: "+data);
+        console.log(game.users[socket.id].name+" made a guess: "+ JSON.stringify(data));
     });
 
     socket.on('disconnect',function(){
-        console.log(game.users[socket.id].name+" left the game");
+        console.log("User not in game Disconnected.");
         if(socket.id in game.users){
+            console.log(game.users[socket.id].name+" left the game");
             game.removeUser(socket.id);
-
         }
     });
 });

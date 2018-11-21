@@ -16,7 +16,7 @@ function sendQuestionResponce(){
 
 var chosenQuestionID= null;
 function guessAnswer(id){
-    
+
     enableAnswerButtons();
 
     console.log("You chose Question: "+id);
@@ -28,6 +28,10 @@ function guessAnswer(id){
 
     var modelEl = document.getElementById("name-modal");
     modelEl.setAttribute("style","display:block;");
+}
+
+function pickName(strName){
+    socket.emit('user-guess',{name: strName, questionId:chosenQuestionID});
 }
 
 function enableAnswerButtons(){
