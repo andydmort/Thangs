@@ -16,6 +16,9 @@ function sendQuestionResponce(){
 
 var chosenQuestionID= null;
 function guessAnswer(id){
+    
+    enableAnswerButtons();
+
     console.log("You chose Question: "+id);
     chosenQuestionID = id;
 

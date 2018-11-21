@@ -116,7 +116,10 @@ usersIO.on('connection', function(socket){
 
     socket.on('disconnect',function(){
         console.log(game.users[socket.id].name+" left the game");
-        game.removeUser(socket.id);
+        if(socket.id in game.users){
+            game.removeUser(socket.id);
+
+        }
     });
 });
 
