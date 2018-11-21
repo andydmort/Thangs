@@ -112,6 +112,16 @@ usersIO.on('connection', function(socket){
 
     socket.on('user-guess',function(data){
         console.log(game.users[socket.id].name+" made a guess: "+ JSON.stringify(data));
+        //Todo: Game logic below.
+        //if answer correct
+            //Set answer to true if guess is correct
+            //if all answers were gessed
+                //Send new Promp to same user
+            //else
+                //resend promp to socket
+        //else
+            //Send guess to new answer 
+        
     });
 
     socket.on('disconnect',function(){
