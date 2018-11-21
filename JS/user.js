@@ -14,13 +14,28 @@ function sendQuestionResponce(){
     responceEl.setAttribute('disabled',null);
 }
 
-
+var chosenQuestionID= null;
 function guessAnswer(id){
+    console.log("You chose Question: "+id);
+    chosenQuestionID = id;
+
+    var answerButt = document.getElementById(id);
+    console.log(answerButt);
+    answerButt.disabled = true;
+
     var modelEl = document.getElementById("name-modal");
     modelEl.setAttribute("style","display:block;");
+}
+
+function enableAnswerButtons(){
+    var answerButtonsEl = document.getElementById("answer-buttons");
+    for ( i in answerButtonsEl.childNodes){
+        answerButtonsEl.childNodes[i].disabled = false;
+    }
 }
 
 function closeModal(){
     var modelEl = document.getElementById("name-modal");
     modelEl.setAttribute("style","display:none;");
+    enableAnswerButtons();
 }

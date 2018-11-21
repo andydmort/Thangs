@@ -99,15 +99,19 @@ usersIO.on('connection', function(socket){
         // game.users[socket.id].lastResponce = data.responce;
         // game.numberOfRecievedAnswers++;
         game.addAnswer(data.responce,socket.id);
+        //This is where everone has answered and we can start the user Guessing Loop.
         if(game.numberOfRecievedAnswers >= game.numUsers){
-            //This is where everone has answered and we can start the user Guessing Loop.
             console.log("Everyone Has answered");
-
             //Send the answers to procotor. 
             sendProctorAnswerPage();
-            GuessingLoop();
+            // GuessingLoop(); //Bypassing the GuessingLoop. Guessing loop probably wont work. 
+            sendUserAnswerPage();    
         }
         console.log(game);
+    });
+
+    socket.on('user-guess',function(data){
+        console.log(game.users[socket.id].name+" made a guess: "+data);
     });
 
     socket.on('disconnect',function(){
@@ -121,7 +125,6 @@ function getRandInt(highVal){
     console.log()
     return Math.floor(Math.random()*highVal+1);
 }
-
 
 async function buildProctorAnswerPage(){
     return new Promise( async function(resolve,reject){
@@ -156,12 +159,12 @@ async function buildUserAnswerPage(){
         userAnswersHtml='';
         for( i in game.answers){
             if(!game.answers[i].isGuessed){
-                await ClientCreator.getPageAndReplace({answerIndex: i, name: '?',answer:game.answers[i].answer},"userPages/userBottomResponceTemplate.html").then((strn1)=>{
+                await ClientCreator.getPageAndReplace({index:i ,answerIndex: i, name: '?',answer:game.answers[i].answer},"userPages/userBottomResponceTemplate.html").then((strn1)=>{
                     userAnswersHtml+= strn1;
                 });
             }
             else{
-                await ClientCreator.getPageAndReplace({answerIndex: i, name: game.answers[i].userName, answer:game.answers[i].answer},"userPages/userBottomResponceTemplate.html").then((strn2)=>{
+                await ClientCreator.getPageAndReplace({index:i ,answerIndex: i, name: game.answers[i].userName, answer:game.answers[i].answer},"userPages/userBottomResponceTemplate.html").then((strn2)=>{
                     userAnswersHtml+= strn2;
                 });
             }
