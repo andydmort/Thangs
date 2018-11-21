@@ -184,8 +184,9 @@ function sendUserAnswerPage(){
 
 //This function will be a loop to go through users so they can guessed who said what. 
 function GuessingLoop(){
+    //TODO: Make sure the is sent to a particular user. 
     sendUserAnswerPage();
-
+    //TODO: Add modal to users answer question. 
 }
 
 http.listen(port, () => console.log(`Server is listening on port ${port}!`));

@@ -13,3 +13,14 @@ function sendQuestionResponce(){
     socket.emit("user-responce",{responce:responceEl.value});
     responceEl.setAttribute('disabled',null);
 }
+
+
+function guessAnswer(id){
+    var modelEl = document.getElementById("name-modal");
+    modelEl.setAttribute("style","display:block;");
+}
+
+function closeModal(){
+    var modelEl = document.getElementById("name-modal");
+    modelEl.setAttribute("style","display:none;");
+}
