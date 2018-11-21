@@ -171,12 +171,35 @@ async function buildUserAnswerPage(){
     });
 }
 
+async function buildUserAnswerNamesPage(){
+    return new Promise( async function(resolve,reject){
+        userAnswersHtml='';
+        //Todo: randomize names. Grab the names and mix them up to a random order. Then place them in the function below. 
+        for( i in game.answers){
+            if(!game.answers[i].isGuessed){
+                await ClientCreator.getPageAndReplace({name: game.answers[i].userName},"userPages/userBottomResponceNamesTemplate.html").then((strn5)=>{
+                    userAnswersHtml+= strn5;
+                });
+            }
+            // else{
+            //     await ClientCreator.getPageAndReplace({answerIndex: i, name: game.answers[i].userName, answer:game.answers[i].answer},"userPages/userBottomResponceNamesTemplate.html").then((strn2)=>{
+            //         userAnswersHtml+= strn2;
+            //     });
+            // }
+        }
+        resolve(userAnswersHtml);
+    });
+}
+
 function sendUserAnswerPage(){
     buildUserAnswerPage().then((strn3)=>{
         console.log("Printing the html for User answer page");
         console.log(strn3);
-        ClientCreator.getPageAndReplace({question:game.getCurrentQuestion(),answers:strn3},"userPages/topResponceTemplate.html").then((strn4)=>{
-            usersIO.emit('send-page', strn4);
+        buildUserAnswerNamesPage().then((strn6)=>{
+            ClientCreator.getPageAndReplace({question:game.getCurrentQuestion(),answers:strn3, nameOptions:strn6},"userPages/topResponceTemplate.html").then((strn4)=>{
+                usersIO.emit('send-page', strn4);
+                
+            });
         });
     });
     
