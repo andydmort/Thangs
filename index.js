@@ -102,13 +102,14 @@ usersIO.on('connection', function(socket){
         // game.users[socket.id].lastResponce = data.responce;
         // game.numberOfRecievedAnswers++;
         game.addAnswer(data.responce,socket.id);
+
         //This is where everone has answered and we can start the user Guessing Loop.
         if(game.numberOfRecievedAnswers >= game.numUsers){
             console.log("Everyone Has answered");
             //Send the answers to procotor. 
             sendProctorAnswerPage();
             // GuessingLoop(); //Bypassing the GuessingLoop. Guessing loop probably wont work. 
-            sendUserAnswerPage();    
+            sendUserAnswerPage(game.userOrder[game.turnOfUserIndex]);    
         }
         console.log(game);
     });
@@ -133,6 +134,7 @@ usersIO.on('connection', function(socket){
             console.log(game.users[socket.id].name+" left the game");
             game.removeUser(socket.id);
         }
+        console.log(game);
     });
 });
 
@@ -204,15 +206,14 @@ async function buildUserAnswerNamesPage(){
     });
 }
 
-function sendUserAnswerPage(){
+
+function sendUserAnswerPage(sockID){
     buildUserAnswerPage().then((strn3)=>{
         console.log("Printing the html for User answer page");
         console.log(strn3);
         buildUserAnswerNamesPage().then((strn6)=>{
             ClientCreator.getPageAndReplace({question:game.getCurrentQuestion(),answers:strn3, nameOptions:strn6},"userPages/topResponceTemplate.html").then((strn4)=>{
-                for (i in game.users){
-                    usersIO.to(i).emit('send-page', strn4);
-                }
+                    usersIO.to(sockID).emit('send-page', strn4);
             });
         });
     });

@@ -21,19 +21,28 @@ function getRandInt(highVal){
 // console.log(readQuestions('questions.txt'));
 
 function Game(gameId){
+
     this.users = {}; //A diction of the user Module, the key will be the socketId
+    this.userOrder=[]; //Holds the order of the users for choosing who will be guessing. 
     this.numUsers = 0;
+    this.turnOfUserIndex = 0; //Whos turn is it go guess. 
     //Indexed by socketit and adds user with name. 
     this.addUser = function(name,socketId){
         this.users[socketId] = new User(name,socketId);
+        this.userOrder.push(socketId);
         this.numUsers++;
     }
     //Takes the socket id and deletes the user from the game.
     this.removeUser = function(socketId){
         delete this.users[socketId];
+        //Take out of user order. 
+        var ind = this.userOrder.indexOf(socketId);
+        if (ind != -1){
+            this.userOrder.splice(ind,1);
+        }
         this.numUsers--;
     }
-    this.turnOfUserIndex = 0;
+
     this.gameId = gameId;
     this.questions = readQuestions('questions.txt');
     this.questionIndex = 0;
@@ -44,6 +53,7 @@ function Game(gameId){
     this.getCurrentQuestion = function(){
         return this.questions[this.questionIndex];
     }
+
     this.numberOfRecievedAnswers=0;
     this.answers = [];
     this.addAnswer = function(answer,socketId){
