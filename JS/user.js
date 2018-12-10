@@ -31,7 +31,7 @@ function guessAnswer(id){
 }
 
 function pickName(strName){
-    socket.emit('user-guess',{name: strName, questionId:chosenQuestionID});
+    socket.emit('user-guess',{name: strName, answerId:chosenQuestionID});
 }
 
 function enableAnswerButtons(){

@@ -25,7 +25,7 @@ function Game(gameId){
     this.users = {}; //A diction of the user Module, the key will be the socketId
     this.userOrder=[]; //Holds the order of the users for choosing who will be guessing. 
     this.numUsers = 0;
-    this.turnOfUserIndex = 0; //Whos turn is it go guess. 
+    this.turnOfUserIndex = 0; //Whos turn is it go guess. This is an index into userOrder
     //Indexed by socketit and adds user with name. 
     this.addUser = function(name,socketId){
         this.users[socketId] = new User(name,socketId);
@@ -41,6 +41,11 @@ function Game(gameId){
             this.userOrder.splice(ind,1);
         }
         this.numUsers--;
+    }
+    //Moves turn of user to the next user and returns that index for userOrder.
+    this.moveUsersTurn = function(){
+        this.turnOfUserIndex = (this.turnOfUserIndex+1)%this.numUsers;
+        return this.turnOfUserIndex;
     }
 
     this.gameId = gameId;
@@ -64,6 +69,15 @@ function Game(gameId){
     this.dropAnswers = function(){
         this.answers=[];
         this.numberOfRecievedAnswers = 0;
+    }
+    this.allAnswersGuessed= function(){
+        guessed = true
+        for (i in this.answers){
+            if (! this.answers[i].isGuessed){
+                guessed = false;
+            }
+        }
+        return guessed;
     }
 }
 

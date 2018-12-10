@@ -4,8 +4,8 @@ function getPage(path){
     return new Promise(function(resolve,reject){
         fs.readFile(path,'utf8', function(err, data) {
             if(err){
-                console.log("here1");
-                console.log("File Read recieved an error: "+err);
+                // console.log("here1");
+                // console.log("File Read recieved an error: "+err);
             }
             else{
                 resolve(data);
@@ -17,9 +17,9 @@ function getPage(path){
 //patter Obj ex. {name: 'Johnathan'}
 function replaceInString(patternObj,fullString){
     for( i in patternObj){
-        console.log("here: "+i);
+        // console.log("here: "+i);
         pat = '\/\$'+ i +'\$\/'; //This is for the pattern /$ <Your pattern> $/ 
-        console.log(pat);
+        // console.log(pat);
         fullString = fullString.replace(pat,patternObj[i]);
     }
     return fullString;

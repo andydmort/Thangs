@@ -109,22 +109,41 @@ usersIO.on('connection', function(socket){
             //Send the answers to procotor. 
             sendProctorAnswerPage();
             // GuessingLoop(); //Bypassing the GuessingLoop. Guessing loop probably wont work. 
-            sendUserAnswerPage(game.userOrder[game.turnOfUserIndex]);    
+            sendUserAnswerPage(game.userOrder[game.turnOfUserIndex]);  
+            sendWaitingToGuessToEveryOneBut(game.userOrder[game.turnOfUserIndex]);
         }
         console.log(game);
     });
 
     socket.on('user-guess',function(data){
         console.log(game.users[socket.id].name+" made a guess: "+ JSON.stringify(data));
-        //Todo: Game logic below.
+        
         //if answer correct
+        if(game.answers[data.answerId].userName == data.name){
+            console.log(JSON.stringify(data)+" was correct!");
             //Set answer to true if guess is correct
+            game.answers[data.answerId].isGuessed = true;
+            sendProctorAnswerPage(); //Showing answer on screen. 
             //if all answers were gessed
-                //Send new Promp to same user
+            if(game.allAnswersGuessed()){
+                //Send new Promp to all users
+                //TODO: send all new prompt to all users.
+                console.log("All answers are guessed.");
+            }
             //else
+            else{
                 //resend promp to socket
+                sendUserAnswerPage(game.userOrder[game.turnOfUserIndex]);   
+                sendWaitingToGuessToEveryOneBut(game.userOrder[game.turnOfUserIndex]); 
+            }
+        }
         //else
+        else{
+            console.log(JSON.stringify(data)+" was wrong!");
             //Send guess to new answer 
+            sendUserAnswerPage(game.userOrder[game.moveUsersTurn()]); 
+            sendWaitingToGuessToEveryOneBut(game.userOrder[game.turnOfUserIndex]);   
+        }
         
     });
 
@@ -181,11 +200,11 @@ async function buildUserAnswerPage(){
                     userAnswersHtml+= strn1;
                 });
             }
-            else{
-                await ClientCreator.getPageAndReplace({index:i ,answerIndex: i, name: game.answers[i].userName, answer:game.answers[i].answer},"userPages/userBottomResponceTemplate.html").then((strn2)=>{
-                    userAnswersHtml+= strn2;
-                });
-            }
+            // else{
+            //     await ClientCreator.getPageAndReplace({index:i ,answerIndex: i, name: game.answers[i].userName, answer:game.answers[i].answer},"userPages/userBottomResponceTemplate.html").then((strn2)=>{
+            //         userAnswersHtml+= strn2;
+            //     });
+            // }
         }
         resolve(userAnswersHtml);
     });
@@ -209,8 +228,8 @@ async function buildUserAnswerNamesPage(){
 
 function sendUserAnswerPage(sockID){
     buildUserAnswerPage().then((strn3)=>{
-        console.log("Printing the html for User answer page");
-        console.log(strn3);
+        // console.log("Printing the html for User answer page");
+        // console.log(strn3);
         buildUserAnswerNamesPage().then((strn6)=>{
             ClientCreator.getPageAndReplace({question:game.getCurrentQuestion(),answers:strn3, nameOptions:strn6},"userPages/topResponceTemplate.html").then((strn4)=>{
                     usersIO.to(sockID).emit('send-page', strn4);
@@ -218,6 +237,18 @@ function sendUserAnswerPage(sockID){
         });
     });
     
+}
+async function sendWaitingToGuessToEveryOneBut(sockID){
+    console.log("SendWaiting to everyone But "+JSON.stringify(sockID));
+    ClientCreator.getPageAndReplace({name:game.users[game.userOrder[game.turnOfUserIndex]].name}, "userPages/waitingToGuess.html").then((strn7)=>{
+        for(i in game.users){
+            console.log("Checking i: "+JSON.stringify(i)+" is not equal to "+JSON.stringify(sockID));
+            if ( i != sockID){
+                usersIO.to(i).emit('send-page', strn7);
+            }
+        }
+    });
+
 }
 
 //This function will be a loop to go through users so they can guessed who said what. 
