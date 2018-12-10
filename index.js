@@ -26,7 +26,7 @@ proctorIO.on('connection', function(socket){
   console.log('proctor connected');
   //Create Game
   game = new Game(getRandInt(100));
-  console.log("Initializing Game:")
+  console.log("Initializing Game:");
   console.log(game);
 
   ClientCreator.getPageAndReplace({gameId:game.gameId},'proctorPages/landing.html').then((strn)=>{
@@ -47,7 +47,10 @@ proctorIO.on('connection', function(socket){
         //     usersIO.emit('send-page', strn);
         // });
         ClientCreator.getPageAndReplace({quest:game.getCurrentQuestion()},'userPages/answerQuestionPrompt.html').then((strn)=>{
-            usersIO.emit('send-page', strn);
+            // usersIO.emit('send-page', strn);
+            for (i in game.users){
+                usersIO.to(i).emit('send-page', strn);
+            }
         });
         
         console.log("Proctor is starting game:");
@@ -207,7 +210,9 @@ function sendUserAnswerPage(){
         console.log(strn3);
         buildUserAnswerNamesPage().then((strn6)=>{
             ClientCreator.getPageAndReplace({question:game.getCurrentQuestion(),answers:strn3, nameOptions:strn6},"userPages/topResponceTemplate.html").then((strn4)=>{
-                usersIO.emit('send-page', strn4);
+                for (i in game.users){
+                    usersIO.to(i).emit('send-page', strn4);
+                }
             });
         });
     });
