@@ -133,8 +133,8 @@ usersIO.on('connection', function(socket){
                 //TODO: Handle What happens after all users guess. 
                 for( i in game.users){
                     sendUsersTheirScore(i);
-
                 }
+                sendProctorScoreOfAllUsers();
                 //TODO: send all new prompt to all users.
                 console.log("All answers are guessed.");
             }
@@ -265,8 +265,28 @@ async function sendUsersTheirScore(sockID){
         usersIO.to(sockID).emit('send-page',strn8);
     });
 }
-function sendUsersScoreToProctor(){
 
+async function getScoreString(){
+    
+    return new Promise(async function(resolve,reject){
+        strnOfScores = "";
+        for(i in game.users){
+            await ClientCreator.getPageAndReplace({name: game.users[i].name , score:game.users[i].score },"proctorPages/scorePageBottom.html").then((strn9)=>{
+                strnOfScores += strn9;
+            });
+        }
+        resolve(strnOfScores);
+    });
+
+}
+function sendProctorScoreOfAllUsers(){
+    // console.log(strnOfScores);
+    getScoreString().then((data1)=>{
+        ClientCreator.getPageAndReplace({scores: data1},"proctorPages/scorePageTop.html").then((strn10)=>{
+            proctorIO.emit('send-page', strn10);
+        });
+    });
+    
 }
 
 //This function will be a loop to go through users so they can guessed who said what. 
