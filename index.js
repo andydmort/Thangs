@@ -130,8 +130,12 @@ usersIO.on('connection', function(socket){
             //if all answers were gessed
             if(game.allAnswersGuessed()){
                 //Send new Promp to all users
-                //TODO: send all new prompt to all users.
                 //TODO: Handle What happens after all users guess. 
+                for( i in game.users){
+                    sendUsersTheirScore(i);
+
+                }
+                //TODO: send all new prompt to all users.
                 console.log("All answers are guessed.");
             }
             //else
@@ -252,6 +256,16 @@ async function sendWaitingToGuessToEveryOneBut(sockID){
             }
         }
     });
+
+}
+
+
+async function sendUsersTheirScore(sockID){
+    await ClientCreator.getPageAndReplace({score: game.users[sockID].score},"userPages/myScorePage.html").then((strn8)=>{
+        usersIO.to(sockID).emit('send-page',strn8);
+    });
+}
+function sendUsersScoreToProctor(){
 
 }
 
