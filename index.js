@@ -124,10 +124,14 @@ usersIO.on('connection', function(socket){
             //Set answer to true if guess is correct
             game.answers[data.answerId].isGuessed = true;
             sendProctorAnswerPage(); //Showing answer on screen. 
+            //Add one to the guessers score.
+            game.users[game.userOrder[game.turnOfUserIndex]].score++; //only Gives one. 
+
             //if all answers were gessed
             if(game.allAnswersGuessed()){
                 //Send new Promp to all users
                 //TODO: send all new prompt to all users.
+                //TODO: Handle What happens after all users guess. 
                 console.log("All answers are guessed.");
             }
             //else
