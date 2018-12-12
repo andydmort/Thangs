@@ -113,7 +113,7 @@ usersIO.on('connection', function(socket){
         console.log(game);
     });
 
-    socket.on('user-guess',function(data){
+    socket.on('user-guess',async function(data){
         console.log(game.users[socket.id].name+" made a guess: "+ JSON.stringify(data));
         
         //if answer correct
@@ -121,26 +121,26 @@ usersIO.on('connection', function(socket){
             console.log(JSON.stringify(data)+" was correct!");
             //Set answer to true if guess is correct
             game.answers[data.answerId].isGuessed = true;
-            sendProctorAnswerPage(); //Showing answer on screen. 
             //Add one to the guessers score.
             game.users[game.userOrder[game.turnOfUserIndex]].score++; //only Gives one. 
-
-            //if all answers were gessed
+            
             if(game.allAnswersGuessed()){
                 //Send new Promp to all users
                 //TODO: Handle What happens after all users guess. 
+                await sendProctorScoreOfAllUsers();
                 for( i in game.users){
                     sendUsersTheirScore(i);
                 }
-                sendProctorScoreOfAllUsers();
                 //TODO: send all new prompt to all users.
                 console.log("All answers are guessed.");
             }
+            //if all answers were gessed
             //else
             else{
                 //resend promp to socket
                 sendUserAnswerPage(game.userOrder[game.turnOfUserIndex]);   
                 sendWaitingToGuessToEveryOneBut(game.userOrder[game.turnOfUserIndex]); 
+                sendProctorAnswerPage(); //Showing answer on screen. 
             }
         }
         //else
@@ -279,9 +279,12 @@ async function getScoreString(){
 }
 function sendProctorScoreOfAllUsers(){
     // console.log(strnOfScores);
-    getScoreString().then((data1)=>{
-        ClientCreator.getPageAndReplace({scores: data1},"proctorPages/scorePageTop.html").then((strn10)=>{
-            proctorIO.emit('send-page', strn10);
+    new Promise(async function(resolve,reject){
+        getScoreString().then((data1)=>{
+            ClientCreator.getPageAndReplace({scores: data1},"proctorPages/scorePageTop.html").then((strn10)=>{
+                proctorIO.emit('send-page', strn10);
+                resolve("Done");
+            });
         });
     });
     
