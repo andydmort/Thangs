@@ -13,3 +13,8 @@ function startGame(){
     console.log("Button clicked for starting game.");
     socket.emit('start-game',{something: "something"});
 }
+
+function nextQuestion(){
+    console.log("Starting Next Question.");
+    socket.emit('next-question',{nothing: 'nothing'});
+}

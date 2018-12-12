@@ -36,16 +36,9 @@ proctorIO.on('connection', function(socket){
     //Setting sockets for Proctor. 
     socket.on('start-game',function(){
         
-        // game.questionIndex=getRandInt(game.questions.length-1);
-        // ClientCreator.getPageAndReplace({quest:game.questions[game.questionIndex]},'proctorPages/displayQuestion.html').then((strn)=>{
-        //     proctorIO.emit('send-page', strn);
-        // });
         ClientCreator.getPageAndReplace({quest:game.getNewQuestion()},'proctorPages/displayQuestion.html').then((strn)=>{
                 proctorIO.emit('send-page', strn);
             });
-        // ClientCreator.getPageAndReplace({quest:game.questions[game.questionIndex]},'userPages/answerQuestionPrompt.html').then((strn)=>{
-        //     usersIO.emit('send-page', strn);
-        // });
         ClientCreator.getPageAndReplace({quest:game.getCurrentQuestion()},'userPages/answerQuestionPrompt.html').then((strn)=>{
             // usersIO.emit('send-page', strn);
             for (i in game.users){
@@ -55,6 +48,11 @@ proctorIO.on('connection', function(socket){
         
         console.log("Proctor is starting game:");
         console.log(game);
+    });
+
+
+    socket.on('next-question',function(){
+        sendNextQuestion();
     });
 
     socket.on('disconnect',function(){
@@ -287,6 +285,20 @@ function sendProctorScoreOfAllUsers(){
         });
     });
     
+}
+
+
+//Used to send the next question to all clients and Proctor. 
+function sendNextQuestion(){
+    ClientCreator.getPageAndReplace({quest:game.getNewQuestion()},'proctorPages/displayQuestion.html').then((strn)=>{
+        proctorIO.emit('send-page', strn);
+    });
+    ClientCreator.getPageAndReplace({quest:game.getCurrentQuestion()},'userPages/answerQuestionPrompt.html').then((strn)=>{
+    // usersIO.emit('send-page', strn);
+        for (i in game.users){
+            usersIO.to(i).emit('send-page', strn);
+        }
+    });
 }
 
 //This function will be a loop to go through users so they can guessed who said what. 
