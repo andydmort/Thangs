@@ -52,6 +52,8 @@ function Game(gameId){
     this.questions = readQuestions('questions.txt');
     this.questionIndex = 0;
     this.getNewQuestion= function(){
+        this.dropAnswers();
+        this.moveUsersTurn();
         this.questionIndex=getRandInt(this.questions.length-1);
         return this.questions[this.questionIndex];
     }
