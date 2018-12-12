@@ -21,6 +21,10 @@ header h1{
 
 }
 
+input{
+    margin: 5px;
+}
+
 button {
     background-color: #1A5E63;
     color: #ECEBE4;
