@@ -10,8 +10,10 @@ function joinGame(){
 
 function sendQuestionResponce(){
     responceEl = document.getElementById('text-field-responce');
-    socket.emit("user-responce",{responce:responceEl.value});
     responceEl.setAttribute('disabled',null);
+    responceButtEl = document.getElementById('button-respond-to-question');
+    responceButtEl.setAttribute('disabled',null);
+    socket.emit("user-responce",{responce:responceEl.value});
 }
 
 var chosenQuestionID= null;

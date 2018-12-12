@@ -1,0 +1,46 @@
+body{
+    background: #ECEBE4;
+    height: 100%;
+}
+
+header{
+    text-align: center;
+    background: #1A5E63;
+    padding: 20px;
+    margin: 20px;
+
+}
+header h1{
+    font-family: 'Nunito', sans-serif;
+    color: #ECEBE4
+}
+
+#client{
+    margin: 20px;
+    font-family: 'Nunito', sans-serif;
+
+}
+
+button {
+    background-color: #1A5E63;
+    color: #ECEBE4;
+    padding: 5px;
+    margin: 10px;
+    border: none;
+    border-radius: 4px;
+    font-weight: 700;
+    /* background: none; */
+}
+
+footer{
+    text-align: center;
+    background: #1A5E63;
+    padding: 20px;
+    margin: 20px;
+}
+
+
+
+/* ECEBE4 light*/
+
+/* 1A5E63 dark*/

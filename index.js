@@ -9,6 +9,7 @@ var io = require('socket.io')(http);
 const port = 3450
 
 app.use(express.static('JS')); 
+app.use(express.static('style'));
 
 var game;//Global game variable. 
 
