@@ -25,6 +25,10 @@
         bodyEl = document.getElementById('client').innerHTML=data;
     });
 
+    socket.on('error-proctor',function(errorString){
+        alert(errorString);
+    });
+
 </script>
 
 </html>

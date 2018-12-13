@@ -72,6 +72,10 @@ usersIO.on('connection', function(socket){
 
     //Setting socket for User
     socket.on('user-join-game',function(data){
+        if(game == null){
+            socket.emit('error-user',"Error: There is no game open right now.");
+            return; 
+        }
         if(game.gameId != data.gameId || data.name == ''){
             console.log("Someone tried an incorrect ID");
             ClientCreator.getPage('userPages/loginError.html').then((strn)=>{
@@ -156,6 +160,7 @@ usersIO.on('connection', function(socket){
 
     socket.on('disconnect',function(){
         console.log("User not in game Disconnected.");
+        if(game == null) return; //Cause an early breakout. 
         if(socket.id in game.users){
             console.log(game.users[socket.id].name+" left the game");
             game.removeUser(socket.id);

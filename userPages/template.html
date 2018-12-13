@@ -25,6 +25,10 @@
         console.log(data);
         bodyEl = document.getElementById('client').innerHTML=data;
     });
+
+    socket.on('error-user',function(errorString){
+        alert(errorString);
+    });
     
     </script>
 </html>
