@@ -1,6 +1,6 @@
 var ClientCreator = require("./modules/clientCreator.js");
 var Game = require("./modules/gameMod.js");
-var User = require("./modules/userMod.js");
+var User = require("./modules/userMod.js");//Not yet used.
 
 var express = require("express");
 var app = express();
