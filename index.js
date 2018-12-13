@@ -206,17 +206,20 @@ function sendProctorAnswerPage(){
 async function buildUserAnswerPage(){
     return new Promise( async function(resolve,reject){
         userAnswersHtml='';
-        for( i in game.answers){
-            if(!game.answers[i].isGuessed){
-                await ClientCreator.getPageAndReplace({index:i ,answerIndex: i, name: '?',answer:game.answers[i].answer},"userPages/userBottomResponceTemplate.html").then((strn1)=>{
+        console.log("Randomizing answers:")
+        console.log(game.answers);
+        randOrderOfAnswers = JSON.parse(JSON.stringify(game.answers));
+        for (i in randOrderOfAnswers){
+            randOrderOfAnswers[i].orginalIndex = i;
+        }
+        randOrderOfAnswers = randOrderOfAnswers.sort((a,b)=>{return .5 - Math.random()});
+        console.log(randOrderOfAnswers);
+        for( j in randOrderOfAnswers){
+            if(!randOrderOfAnswers[j].isGuessed){
+                await ClientCreator.getPageAndReplace({index:randOrderOfAnswers[j].orginalIndex ,answerIndex: randOrderOfAnswers[j].orginalIndex, name: '?',answer:randOrderOfAnswers[j].answer},"userPages/userBottomResponceTemplate.html").then((strn1)=>{
                     userAnswersHtml+= strn1;
                 });
             }
-            // else{
-            //     await ClientCreator.getPageAndReplace({index:i ,answerIndex: i, name: game.answers[i].userName, answer:game.answers[i].answer},"userPages/userBottomResponceTemplate.html").then((strn2)=>{
-            //         userAnswersHtml+= strn2;
-            //     });
-            // }
         }
         resolve(userAnswersHtml);
     });
