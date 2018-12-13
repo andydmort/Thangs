@@ -18,11 +18,19 @@ header h1{
 #client{
     margin: 20px;
     font-family: 'Nunito', sans-serif;
+}
 
+#name-modal{
+    margin: 5px;
+    border-style: solid;
+    border-color: #1A5E63;
+    border-radius: 4px;
+    padding: 5px;
 }
 
 input{
     margin: 5px;
+    padding: 5px;
 }
 
 button {
