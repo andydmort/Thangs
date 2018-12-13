@@ -44,6 +44,10 @@ button {
     /* background: none; */
 }
 
+button:disabled {
+    background-color: darkgray;
+}
+
 footer{
     text-align: center;
     background: #1A5E63;
