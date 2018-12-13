@@ -67,7 +67,7 @@ var usersIO = io.of('/users');
 usersIO.on('connection', function(socket){
     console.log('user connected');
     ClientCreator.getPage('userPages/landing.html').then((strn)=>{
-        usersIO.emit('send-page', strn);
+        socket.emit('send-page', strn);
     });
 
     //Setting socket for User
@@ -83,9 +83,18 @@ usersIO.on('connection', function(socket){
             });
         }
         else{
-            console.log(data.name+" is joining quiz "+data.gameId);
             //adding user to game
             // game.users[socket.id]=new User(data.name,socket.id);
+            
+            //Check if name has already been used. 
+            for(i in game.users){
+                if(data.name == game.users[i].name){
+                    socket.emit('error-user',"Error: Someone has already chosen that user Name.");
+                    return;
+                }
+            }
+            
+            console.log(data.name+" is joining quiz "+data.gameId);
             game.addUser(data.name,socket.id);
             //sending name to proctor
             proctorIO.emit('to-proctor-name-joined',data);

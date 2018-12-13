@@ -45,6 +45,15 @@ function Game(gameId){
     //Moves turn of user to the next user and returns that index for userOrder.
     this.moveUsersTurn = function(){
         this.turnOfUserIndex = (this.turnOfUserIndex+1)%this.numUsers;
+        
+        //Find out if user has ben guessed. If they have skip em!
+        UsersTurnUserName = this.users[this.userOrder[this.turnOfUserIndex]].name;
+        for(i in this.answers){
+            if(this.answers[i].isGuessed && UsersTurnUserName == this.answers[i].userName){
+                return this.moveUsersTurn();
+            }
+        }
+
         return this.turnOfUserIndex;
     }
 
