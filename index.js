@@ -13,10 +13,10 @@ app.use(express.static('style'));
 
 var game;//Global game variable. 
 
-app.get('/', (req, res) =>{
+app.get('/proctor', (req, res) =>{
     res.sendFile(__dirname+'/proctorPages/template.html');
 });
-app.get('/user', (req, res) =>{
+app.get('/', (req, res) =>{
     res.sendFile(__dirname+'/userPages/template.html');
 });
 
