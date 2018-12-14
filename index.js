@@ -94,7 +94,7 @@ usersIO.on('connection', function(socket){
                 }
             }
             
-            console.log(data.name+" is joining quiz "+data.gameId);
+            console.log(data.name+" is joining quiz " + data.gameId);
             game.addUser(data.name,socket.id);
             //sending name to proctor
             proctorIO.emit('to-proctor-name-joined',data);
@@ -138,14 +138,14 @@ usersIO.on('connection', function(socket){
             //Add one to the guessers score.
             game.users[game.userOrder[game.turnOfUserIndex]].score++; //only Gives one. 
             
-            if(game.allAnswersGuessed()){
+            if(game.allAnswersGuessedButCurrentGuesser()){
                 //Send new Promp to all users
                 //TODO: Handle What happens after all users guess. 
+                game.users[game.userOrder[game.turnOfUserIndex]].score++; //This point is for the player who was not guesses. And that player is the one currently guessing. 
                 await sendProctorScoreOfAllUsers();
                 for( i in game.users){
                     sendUsersTheirScore(i);
                 }
-                //TODO: send all new prompt to all users.
                 console.log("All answers are guessed.");
             }
             //if all answers were gessed
@@ -234,12 +234,13 @@ async function buildUserAnswerPage(){
     });
 }
 
-async function buildUserAnswerNamesPage(){
+async function buildUserAnswerNamesPage(sockID){
     return new Promise( async function(resolve,reject){
         userAnswersHtml='';
+        sockIDUserName = game.users[sockID].name;
         //Todo: randomize names. Grab the names and mix them up to a random order. Then place them in the function below. 
         for( i in game.answers){
-            if(!game.answers[i].isGuessed){
+            if(!game.answers[i].isGuessed && (sockIDUserName != game.answers[i].userName)){
                 await ClientCreator.getPageAndReplace({name: game.answers[i].userName, name1: game.answers[i].userName},"userPages/userBottomResponceNamesTemplate.html").then((strn5)=>{
                     userAnswersHtml+= strn5;
                 });
@@ -254,7 +255,7 @@ function sendUserAnswerPage(sockID){
     buildUserAnswerPage().then((strn3)=>{
         // console.log("Printing the html for User answer page");
         // console.log(strn3);
-        buildUserAnswerNamesPage().then((strn6)=>{
+        buildUserAnswerNamesPage(sockID).then((strn6)=>{
             ClientCreator.getPageAndReplace({question:game.getCurrentQuestion(),answers:strn3, nameOptions:strn6},"userPages/topResponceTemplate.html").then((strn4)=>{
                     usersIO.to(sockID).emit('send-page', strn4);
             });

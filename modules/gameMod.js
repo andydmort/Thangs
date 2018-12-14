@@ -81,14 +81,14 @@ function Game(gameId){
         this.answers=[];
         this.numberOfRecievedAnswers = 0;
     }
-    this.allAnswersGuessed= function(){
-        guessed = true
-        for (i in this.answers){
-            if (! this.answers[i].isGuessed){
-                guessed = false;
+    this.allAnswersGuessedButCurrentGuesser= function(){
+        var amountGuessed = 0;
+        for(i in this.answers){
+            if(this.answers[i].isGuessed){
+                amountGuessed++;
             }
         }
-        return guessed;
+        return amountGuessed >= this.numberOfRecievedAnswers - 1;
     }
 }
 
